@@ -27,6 +27,9 @@ func NewLZW() *LZW {
 		currOffset:      0,
 	}
 
+	lzw.Put(START_CODE, "START")
+	lzw.Put(STOP_CODE, "STOP")
+
 	return lzw
 }
 
@@ -102,6 +105,8 @@ func (lzw *LZW) Encode(w io.Writer, data string) {
 	for _, currChar := range data {
 		//currChar := data[i]
 
+		lzw.Put(uint16(rune(currChar)), string(currChar))
+
 		testNewEntry := newEntry + string(currChar)
 
 		_, ok := lzw.ReverseGet(testNewEntry)
@@ -110,10 +115,11 @@ func (lzw *LZW) Encode(w io.Writer, data string) {
 		if !ok {
 			// send code for new entry
 			//newEntryCode := lzw.GetCodeForStr(newEntry)
-			newEntryCode, ok := lzw.ReverseGet(newEntry)
-			if !ok {
-				fmt.Println("oops? new code not there")
-			}
+			newEntryCode, _ := lzw.ReverseGet(newEntry)
+			//if !ok {
+			//	newEntryCode = lzw.GetCodeForStr(string(currChar))
+			//}
+			fmt.Printf("new code: %d\n", newEntryCode)
 			binary.LittleEndian.PutUint16(buffer, newEntryCode)
 			w.Write(buffer)
 

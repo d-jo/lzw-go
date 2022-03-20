@@ -15,7 +15,7 @@ func TestEncode(t *testing.T) {
 
 	lzwObj := lzw.NewLZW()
 
-	lzwObj.InitDict(input)
+	//lzwObj.InitDict(input)
 
 	lzwObj.Encode(outBuffer, input)
 
